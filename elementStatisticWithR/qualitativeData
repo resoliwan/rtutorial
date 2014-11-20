@@ -1,0 +1,99 @@
+# http://www.r-tutor.com/elementary-statistics/qualitative-data
+# qualitative == categorial mean grade (A,B,C,D) or rating (AAA,BBB,CCC)
+
+library(MASS) #내장 데이터 프레임 painters를 뛰우기 위해서 load
+painters # 내장 데이터 18세기의 미술가에 대한 정보
+help(painters) #내장 데이터 프레임에 대한 정보를 볼수 있음
+#              Composition Drawing Colour Expression School
+# Da Udine                 10       8     16          3      A
+# Da Vinci                 15      16      4         14      A
+# Del Piombo                8      13     16          7      A
+# Del Sarto                12      16      9          8      A
+painters$School #painters의 SChool 칼럼에 접근
+
+# Frequency Distribution of Qualtive Data
+# 데이터의 빈도수
+# frequency distribution of a data is a summary of the data occurrence in a colltion of non-overlapping categories
+# problem find the frequency distribution of the painters in the data set painters
+
+school = painters$School
+school.freq = table(school) # apply the table function
+?table #빈도수를 측정하는 테이블 만들기
+school.freq
+cbind(school.freq)
+?cbind #combine r object by rows or column 행 열을 변환해서 보여줌
+
+#exercise
+# 1.find thre frequency distribution of the composition scores in painters
+composition = painters$Composition
+composition
+composition.freq = table(composition)
+composition.freq
+cbind(composition.freq)
+
+# relative frequency of qualitative data
+# 데이터의 상대 빈도수
+# relative frequency == frequency / sample SI
+
+school.freq
+?nrow # the number of rows
+?ncol # the number of columns
+school.refreq = school.freq / nrow(painters)
+school.refreq
+school.refreq * 100
+
+#exercise
+# find the relative frequency distribution of the composition scores in painters
+composition.freq
+composition.refreq = composition.freq / nrow(painters)
+composition.refreq * 100
+
+# Bar Graph
+# a bar graph of a qualitative data sample consists of vertical parallel bars that show the frequncy distribution graphically
+barplot(school.freq)
+
+# add color at bars
+colors = c("red","yellow","green","violet","orange","blue","pink","cyan")
+barplot(school.freq, col = colors)
+
+# exercise
+# find the bar graph of composition scores in painters
+composition.freq
+barplot(composition.freq)
+barplot(composition.freq, col = colors) #bar 색깔이 모자르면 recycle 된다.
+
+# Pie Chart
+# a pie chart of qualitative data sample consists of pizza wedges that shows the frequency distribution graphically
+
+pie(school.freq)
+pie(school.freq, col = colors)
+
+#exercise
+# find the pie chart of composition scores in painters
+pie(composition.freq)
+
+#category statistics
+# find out the mean of composition scores of school C in the data set painters
+school
+school == "C" # school 에서 C인 에의 백터에는 true 를 리턴해라
+c_school = school == "C" #school == "C" 에 따른 TRUE, FALASE 백터를 c_school 에 저장
+c_school
+c_painters = painters[c_school, ] #logical indexing(TRUE, FALSE 로 구성된 백터) 을 사용해서 원하는 로우 추출
+c_painters
+mean(c_painters$Composition)
+
+#use taaply function to compute them at once
+tapply(painters$Composition, painters$School, mean)
+?tapply #tapply(object, INDEX, function) object에 index 로 분류해서 function을 적용함
+
+#exercise
+# find programmatically the school with the highest composition score
+tapply(painters$Composition, painters$School, sum)
+
+# find the percentage of painters whose color score is equal to or above 14
+color = painters$Colour
+c_color = color >= 16
+c_color
+table(c_color) / nrow(painters) * 100
+#위와 동일한식
+tapply(painters$Colour, painters$Colour >= 16, length) / nrow(painters) * 100
